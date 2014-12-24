@@ -11,7 +11,7 @@ if (!defined('SYSTEM')) exit('No direct script access allowed');
  * @author      Rick Lubbers <me@ricklubbers.nl>
  * @since       2.0
  */
-class Kamele extends Singleton {
+class Core extends Singleton {
     
     /**
      * Initializes router, autoloading and some other basic functionalities
