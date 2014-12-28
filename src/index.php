@@ -9,6 +9,7 @@
 
 // Intializing basic stuff
 define("KAMELE_VERSION", '2.0');
+define("SYSTEM", KAMELE_VERSION);       // For compatibility with Kamele 1.x libraries
 define("MODE", "development");
 
 // Evaluate environment
