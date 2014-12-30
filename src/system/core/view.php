@@ -97,7 +97,8 @@ class View {
 		$output = '';
 		foreach ($data as $value) {
 			if (!is_array($value)) $value = array($value);
-			$output .= (new View($viewpath))->render($value);
+			$view = new View($viewpath);
+			$output .= $view->render($value);
 		}
 		return $output;
 	}
@@ -116,7 +117,8 @@ class View {
 		for ($i = 1; $i < sizeof($parts); $i++) {
 			$part = $parts[$i];
 			$subparts = explode('}}', $part);
-			$output .= (new View($subparts[0]))->render();
+			$view = new View($subparts[0]);
+			$output .= $view->render();
 			unset($subparts[0]);
 			$output .= implode('}}', $subparts);
 		}

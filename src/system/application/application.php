@@ -29,7 +29,8 @@ abstract class Application {
 				return $instances[$class] = $class::getInstance();
 			} 
 			else {
-                return $instances[$class] = (new ReflectionClass($class))->newInstanceArgs($args);
+			    $reflection = new ReflectionClass($class);
+                return $instances[$class] = $reflection->newInstanceArgs($args);
 			}
 		}
 	}
