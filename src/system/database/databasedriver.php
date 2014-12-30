@@ -37,6 +37,13 @@ interface DatabaseDriver {
 	public function query($query);
 	
 	/**
+	 * Returns result of the last query again.
+	 * NOTE: this does NOT perform the query again!
+	 * @return	DatabaseResult
+	 */
+	public function lastResult();
+	
+	/**
 	 * Returns number of affected rows by last query
 	 * @return	int
 	 */

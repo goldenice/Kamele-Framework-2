@@ -28,7 +28,11 @@ class Driver implements DatabaseDriver {
 	}
 	
 	public function query($query) {
-		return $last_query_result = $this->handler->query($query);
+		return $last_query_result = new Result($this->handler->query($query));
+	}
+	
+	public function lastResult() {
+		return $last_query_result;
 	}
 	
 	public function rowsAffected() {
