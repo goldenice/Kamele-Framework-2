@@ -18,7 +18,7 @@ class Exceptions {
 	 * @param	Exception	$e
 	 * @return	void
 	 */
-	public function handle($e) {
+	public static function handle($e) {
 		// TODO: implement
 	}
 	

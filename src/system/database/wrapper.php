@@ -11,7 +11,7 @@ if (!defined('SYSTEM')) exit('No direct script access allowed');
  * @since		2.0
  * @author		Rick Lubbers <me@ricklubbers.nl>
  */
-class Wrapper implements DatabaseDriver {
+class Wrapper {
     
     private $driver;
     

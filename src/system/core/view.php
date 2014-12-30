@@ -39,8 +39,8 @@ class View {
 	 * @return	string
 	 */
 	public function render($data) {
-		$view = $this->fillInOutputs($data, file_get_contents($this->path));
-		return $this->fillInViews($view);
+		$view = $this->fillInViews(file_get_contents($this->path));
+		return $this->fillInOutputs($data, $view);
 	}
 	
 	/**
@@ -69,11 +69,19 @@ class View {
 			$part = $parts[$i];
 			$subparts = explode('}}', $part);
 			if (sizeof($foreach = explode(':', $subparts)) > 1) {
-				$output .= $this->foreachView($data[$foreach[0]], $foreach[1]);
+			    if (!isset($data[$foreach[0]])) {       // Substitute original if no data given
+			        $output .= '{{output:'.$part;
+			    } else {
+				    $output .= $this->foreachView($data[$foreach[0]], $foreach[1]);
+			    }
 			} else {
-				$output .= $data[$subparts[0]];
-				unset($subparts[0]);
-				$output .= implode('}}', $subparts);
+			    if (!isset($data[$subparts[0]])) {      // Substitute original if no data given
+			        $output .= '{{output:'.$part;
+			    } else {
+				    $output .= $data[$subparts[0]];
+				    unset($subparts[0]);
+				    $output .= implode('}}', $subparts);
+			    }
 			}
 		}
 		return $output;
