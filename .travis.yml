@@ -1,0 +1,19 @@
+language: php
+
+php:
+  - 5.6
+  - 5.5
+  - 5.4
+  - 5.3
+
+branches:
+  only:
+    - master
+    - development
+
+before_script:
+  - echo "Travis Build"
+  - cd src
+       
+script:
+  - php index.php
