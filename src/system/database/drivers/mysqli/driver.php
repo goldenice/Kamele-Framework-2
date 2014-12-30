@@ -43,4 +43,8 @@ class Driver implements DatabaseDriver {
 		return $this->handler->error;
 	}
 	
+	public function escape($input) {
+		return $this->handler->real_escape_string($input);
+	}
+	
 }

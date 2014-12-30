@@ -55,4 +55,11 @@ interface DatabaseDriver {
 	 */
 	public function lastError();
 	
+	/**
+	 * Escapes a given string
+	 * @param   string      $input
+	 * @return  string
+	 */
+	public function escape($input);
+	
 }
