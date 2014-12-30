@@ -1,6 +1,12 @@
 <?php
 namespace Application\Controllers;
+
+// System classes
 use System\Application\Controller;
+
+// Models
+use Application\Models\Info;
+
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
@@ -13,6 +19,9 @@ class Home extends Controller {
     }
     
     public function index($arg = null) {
-    	$this->view_data['title'] = 'Kamele 2.x';
+        $model = new Info();
+        
+    	$this->view_data['title'] = $model->getTitle();
+    	$this->view_data['text'] = $model->getHelloWorld();
     }
 }
