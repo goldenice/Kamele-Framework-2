@@ -11,6 +11,7 @@
 define("KAMELE_VERSION", '2.0');
 define("SYSTEM", KAMELE_VERSION);       // For compatibility with Kamele 1.x libraries
 define("MODE", "development");
+define("DIR_SEPARATOR", "/");
 
 // Evaluate environment
 if (MODE == "production" || MODE == "testing") {
@@ -27,9 +28,11 @@ else {
 // Load all configuration files
 $c_dir = opendir('config');
 while ($c_item = readdir($c_dir)) {
-    if ($c_item != '.' && $c_item != '..' && !is_dir($c_item)) require_once $c_item;
+    if ($c_item != '.' && $c_item != '..' && !is_dir($c_item)) require_once 'config'.DIR_SEPARATOR.$c_item;
 }
 
 // Initiate the core
+require_once 'system'.DIR_SEPARATOR.'core'.DIR_SEPARATOR.'singleton.php';
+require_once 'system'.DIR_SEPARATOR.'core'.DIR_SEPARATOR.'core.php';
 $core = \System\Core\Core::getInstance();
 $core->main();

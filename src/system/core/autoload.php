@@ -20,7 +20,7 @@ class Autoload {
      * @return  boolean
      */
     public static function load($classname) {
-        require (self::getPath($classname) . strtolower(self::getClassName($classname)) . '.php');
+        return require (self::getPath($classname) . strtolower(self::getClassName($classname)) . '.php');
     }
     
     /**

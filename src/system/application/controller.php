@@ -1,5 +1,6 @@
 <?php
 namespace System\Application;
+use System\Core\View;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
@@ -23,7 +24,7 @@ abstract class Controller extends Application {
      * @return  void
      */
     public function __construct() {
-        $this->loadView();
+        $this->_loadView();
     }
     
     /**
@@ -32,30 +33,22 @@ abstract class Controller extends Application {
      */
     protected function _loadView() {
         if ($this->view == true) {
-            $this->view_obj = new View($view_path);
+            $this->view_obj = new View($this->view_path);
             return true;
         }
         return false;
     }
     
     /**
-     * Outputs the view to the browser if it is set
+     * Destructor. IS NOT BUILT-IN DESTRUCTOR BY PHP! Is called by Router class...
      * @return  boolean
      */
-    protected function _outputView() {
-        if ($this->view == true && $this->view_obj instanceof \System\Core\View) {
+    public function _destruct() {
+        if ($this->view == true && $this->view_obj != null) {
             $this->view_obj->output($this->view_data);
             return true;
         }
         return false;
-    }
-    
-    /**
-     * Destructor function
-     * @return  void
-     */
-    public function __destruct() {
-        $this->renderView();
     }
     
 }

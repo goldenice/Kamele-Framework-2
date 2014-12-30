@@ -57,10 +57,12 @@ class Router {
 	 */
 	private function route($uri) {
 		$parts = $this->splitUri($this->cleanPath($uri));
+		$parts[] = '';
+		$parts[] = '';
 		$this->execute(
 			$this->determineController($parts[0]), 
 			$this->determineMethod($parts[1]), 
-			$this->getArguments($uriparts)
+			$this->getArguments($parts)
 			);
 	}
 	
@@ -72,13 +74,9 @@ class Router {
 	 */
 	private function execute($class, $method, array $arguments = array()) {
 		$class = CONTROLLER_NAMESPACE.$class;
-		if ($class instanceof Controller) {
-			$controller = new $class;
-			$controller->$method($args);
-		} 
-		else {
-			throw new RouterException('Controller called is not a controller-type');
-		}
+		$controller = new $class;
+		$controller->$method($arguments);
+		$controller->_destruct();
 	}
 	
 	/**

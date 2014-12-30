@@ -1,5 +1,5 @@
 <?php
-namespace System\Application;
+namespace System\Core;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
@@ -39,7 +39,7 @@ class View {
 	 * @return	string
 	 */
 	public function render($data) {
-		$view = $this->fillInOutputs($data, file_get_contents($this->view));
+		$view = $this->fillInOutputs($data, file_get_contents($this->path));
 		return $this->fillInViews($view);
 	}
 	
@@ -64,13 +64,16 @@ class View {
 		$output = '';
 		$data['baseurl'] = BASEURL;
 		$parts = explode('{{output:', $view);
+		$output = $parts[0];
 		for ($i = 1; $i < sizeof($parts); $i++) {
 			$part = $parts[$i];
-			$subparts = explode('}', $part);
+			$subparts = explode('}}', $part);
 			if (sizeof($foreach = explode(':', $subparts)) > 1) {
 				$output .= $this->foreachView($data[$foreach[0]], $foreach[1]);
 			} else {
-				$output .= $part . $data[$subparts[0]] . implode('}', array_shift($subparts));
+				$output .= $data[$subparts[0]];
+				unset($subparts[0]);
+				$output .= implode('}}', $subparts);
 			}
 		}
 		return $output;
@@ -101,10 +104,13 @@ class View {
 		$output = '';
 		$data['baseurl'] = BASEURL;
 		$parts = explode('{{view:', $view);
+		$output = $parts[0];
 		for ($i = 1; $i < sizeof($parts); $i++) {
 			$part = $parts[$i];
-			$subparts = explode('}', $part);
-			$output .= $part . (new View($subparts[0]))->render() . implode('}', array_shift($subparts));
+			$subparts = explode('}}', $part);
+			$output .= (new View($subparts[0]))->render();
+			unset($subparts[0]);
+			$output .= implode('}}', $subparts);
 		}
 		return $output;
 	}
