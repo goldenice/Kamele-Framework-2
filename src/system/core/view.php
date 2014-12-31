@@ -68,7 +68,7 @@ class View {
 		for ($i = 1; $i < sizeof($parts); $i++) {
 			$part = $parts[$i];
 			$subparts = explode('}}', $part);
-			if (sizeof($foreach = explode(':', $subparts)) > 1) {
+			if (sizeof($foreach = explode(':', $subparts[0])) > 1) {
 			    if (!isset($data[$foreach[0]])) {       // Substitute original if no data given
 			        $output .= '{{output:'.$part;
 			    } else {
@@ -118,7 +118,7 @@ class View {
 			$part = $parts[$i];
 			$subparts = explode('}}', $part);
 			$view = new View($subparts[0]);
-			$output .= $view->render();
+			$output .= $view->render(array());
 			unset($subparts[0]);
 			$output .= implode('}}', $subparts);
 		}
