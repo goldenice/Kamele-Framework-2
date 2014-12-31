@@ -21,8 +21,6 @@ class Core extends Singleton {
     	ob_start();			// Prevents headers erroring everywhere
     	session_start();
     	
-    	$this->loadBaseSystem();
-    	
     	// Use default autoloading implementation
     	spl_autoload_extensions('.php');
     	spl_autoload_register();
@@ -30,23 +28,7 @@ class Core extends Singleton {
     	// Set an exception handler
     	set_exception_handler('\System\Core\Exceptions::handle');
     	
-    	$router = $this->getRouter();
-    }
-    
-    /**
-     * Loads the bare minimum of system classes
-     * @return 	void
-     */
-    private function loadBaseSystem() {
-    	require_once 'system/core/router.php';
-    }
-    
-    /**
-     * Initiates a new Router object
-     * @return 	Router
-     */
-    private function getRouter() {
-    	return new Router();
+    	$router = new Router();
     }
     
 }
