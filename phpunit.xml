@@ -1,0 +1,7 @@
+<phpunit>
+    <testsuites>
+        <testsuite name="core">
+            <file>tests/system/core/viewtest.php</file>
+        </testsuite>
+    </testsuites>
+</phpunit>

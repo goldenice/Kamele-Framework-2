@@ -1,0 +1,1 @@
+before {{output:var1}} {{output:var2}} after

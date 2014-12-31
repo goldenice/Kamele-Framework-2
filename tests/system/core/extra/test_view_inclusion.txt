@@ -1,0 +1,1 @@
+{{view:tests/system/core/extra/test_view.txt}} {{output:var1}}
