@@ -73,6 +73,8 @@ class View {
 			        $output .= '{{output:'.$part;
 			    } else {
 				    $output .= $this->foreachView($data[$foreach[0]], $foreach[1]);
+				    unset($subparts[0]);
+				    $output .= implode('}}', $subparts);
 			    }
 			} else {
 			    if (!isset($data[$subparts[0]])) {      // Substitute original if no data given
@@ -96,7 +98,7 @@ class View {
 	private function foreachView($data, $viewpath) {
 		$output = '';
 		foreach ($data as $value) {
-			if (!is_array($value)) $value = array($value);
+			if (!is_array($value)) $value = array('value'=>$value);
 			$view = new View($viewpath);
 			$output .= $view->render($value);
 		}
