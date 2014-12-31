@@ -1,5 +1,7 @@
 language: php
 
+sudo: false
+
 php:
   - hhvm
   - 5.6
