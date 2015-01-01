@@ -6,13 +6,6 @@ class ViewTest extends PHPUnit_Framework_Testcase {
     private $incl_view;
     private $foreach_view;
     
-    public static function setUpBeforeClass() {
-    	define('SYSTEM', 'KAMELE2-UNITTESTING');
-        define('KAMELE', '2.x');
-        define('DIR_SEPARATOR', '/');
-        define('BASEURL', '');
-    }
-    
     public function setUp() {
         set_include_path('src');
         require_once 'system/core/view.php';
