@@ -18,8 +18,10 @@ class Exceptions {
 	 * @param	Exception	$e
 	 * @return	void
 	 */
-	public static function handle($e) {
-		// TODO: implement
+	public static function handle(\Exception $e) {
+		echo 'Exception: '.$e->getMessage().'<br />';
+		echo 'On line '.$e->getLine().' in file '.$e->getFile().'<br />';
+		echo 'Trace: '.$e->getTraceAsString().'<br /><br />';
 	}
 	
 }
