@@ -6,21 +6,21 @@ class RouterTest extends PHPUnit_Framework_Testcase {
     public function setUp() {
         set_include_path('src');
         require_once 'system/core/router.php';
-        $this->router = new \System\Core\Router();
+        $this->router = new \System\Core\Router(true);
     }
     
     public function testCleaning() {
         $uri = 'index.php?/class/method/arg1/arg2/';
-        $uri2 = '';
+        $uri2 = '///';
         $this->assertEquals('class/method/arg1/arg2', $this->router->cleanPath($uri), "Cleaning the URI");
-        $this->assertEquals('/', $this->router->cleanPath($uri2), "Cleaning empty URI to slash");
+        $this->assertEquals('', $this->router->cleanPath($uri2), "Cleaning empty URI to slash");
     }
     
-    public function testDetermineClass() {
+    public function testDetermineController() {
         $class = 'class';
         $class2 = '';
-        $this->assertEquals('Class', $this->router->determineClass($class), "Determine class with input");
-        $this->assertEquals('Home', $this->router->determineClass($class2), "Determine class without input");
+        $this->assertEquals('Class', $this->router->determineController($class), "Determine class with input");
+        $this->assertEquals('Home', $this->router->determineController($class2), "Determine class without input");
     }
     
     public function testDetermineMethod() {

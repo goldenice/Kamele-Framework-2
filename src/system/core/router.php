@@ -26,8 +26,9 @@ class Router {
 	 * Constructor method
 	 * @return 	void
 	 */
-	public function __construct() {
+	public function __construct($prevent_autoroute = false) {
 		$this->mode = $this->isCli() ? self::MODE_CLI : self::MODE_HTTP;
+		if ($prevent_autoroute == true) return;
 		
 		if ($this->mode == self::MODE_CLI) {
             if (isset($_SERVER['argv'][1])) {
@@ -55,7 +56,7 @@ class Router {
 	 * @param	string	$uri
 	 * @return	void
 	 */
-	private function route($uri) {
+	public function route($uri) {
 		$parts = $this->splitUri($this->cleanPath($uri));
 		$parts[] = '';
 		$parts[] = '';
@@ -72,7 +73,7 @@ class Router {
 	 * @param	string		$method
 	 * @return	void
 	 */
-	private function execute($class, $method, array $arguments = array()) {
+	public function execute($class, $method, array $arguments = array()) {
 		$class = CONTROLLER_NAMESPACE.$class;
 		$controller = new $class;
 		$controller->$method($arguments);
@@ -84,7 +85,7 @@ class Router {
 	 * @param	string		$uri
 	 * @return	string
 	 */
-	private function cleanPath($uri) {
+	public function cleanPath($uri) {
 		$parts = explode('index.php', $uri);
 		if (isset($parts[1])) {
 			$uri = ltrim($parts[1], '?');
@@ -99,7 +100,7 @@ class Router {
 	 * @param	string		$uri
 	 * @return	string[]
 	 */
-	private function splitUri($uri) {
+	public function splitUri($uri) {
 		return explode('/', $uri);
 	}
 	
@@ -108,7 +109,7 @@ class Router {
 	 * @param	string		$uripart
 	 * @return	string
 	 */
-	private function determineController($uripart) {
+	public function determineController($uripart) {
 		if ($uripart == '' || $uripart == null) {
 			return DEFAULT_CONTROLLER;
 		}
@@ -120,7 +121,7 @@ class Router {
 	 * @param	string		$uripart
 	 * @return	string
 	 */
-	private function determineMethod($uripart) {
+	public function determineMethod($uripart) {
 		if ($uripart == '' || $uripart == null) {
 			return DEFAULT_CONTROLLER_METHOD;
 		}	
@@ -132,7 +133,7 @@ class Router {
 	 * @param	string[]	$uriparts
 	 * @return	string[]
 	 */
-	private function getArguments(array $uriparts) {
+	public function getArguments(array $uriparts) {
 		unset($uriparts[0]);
 		unset($uriparts[1]);
 		return array_values($uriparts);
