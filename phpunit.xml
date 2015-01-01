@@ -3,6 +3,7 @@
         <testsuite name="core">
             <file>tests/system/core/viewtest.php</file>
             <file>tests/system/core/exceptionstest.php</file>
+            <file>tests/system/core/routertest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
