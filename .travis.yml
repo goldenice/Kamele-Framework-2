@@ -18,4 +18,4 @@ script:
   - cd src
   - php index.php
   - cd ..
-  - phpunit --configuration ./phpunit.xml --coverage-text
+  - phpunit --configuration ./phpunit.xml --bootstrap tests/bootstrap.php --coverage-text
