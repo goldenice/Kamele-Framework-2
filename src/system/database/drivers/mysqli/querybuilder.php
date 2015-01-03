@@ -162,17 +162,17 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @return	QueryBuilder
      */
     public function where($input) {
-    	if ($this->isMultiArray($input)) {
-    		foreach ($input as $key => $value) {
-    			if (!is_numeric($value)) $value = $this->quote($value);
-    			$this->appendWhere($this->backtick($key) . "=" . $value);
+    	if (is_array($input) && $this->isMultiArray($input)) {
+    		foreach ($input as $value) {
+    			if (!is_numeric($value[1])) $value[1] = $this->quote($value[1]);
+    			$this->appendWhere($this->backtick($value[0]) . " = " . $value[1]);
     		}
     	}
     	else if (is_array($input) && sizeof($input) == 2) {
     		if (!is_numeric($input[1])) $input[1] = $this->quote($input[1]);
-    		$this->appendWhere($this->backtick($input[0]) . "=" . $input[1]);
+    		$this->appendWhere($this->backtick($input[0]) . " = " . $input[1]);
     	} else {
-    		$this->appendWhere((string) $input);
+    		$this->appendWhere($input);
     	}
     }
     
@@ -183,7 +183,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      */
     protected function appendWhere($input) {
     	if (trim($this->where) == "") {
-    		$this->where = "WHERE" . $input;
+    		$this->where = "WHERE " . $input. " ";
     	} else {
     		$this->where .= "AND " . $input . " ";
     	}
@@ -211,12 +211,28 @@ class QueryBuilder implements \System\Database\QueryBuilder {
 		return $this;
 	}
     
-    public function update($table, array $keyvalpairs) {}
+    /**
+     * Generates an UPDATE ... SET ... statement
+     * @param	string		$table
+     * @param	array		$keyvalpairs
+     * @param	boolean		$quoteval
+     * @return	QueryBuilder
+     */
+    public function update($table, array $keyvalpairs, $quoteval = true) {
+    	$this->initialpart = "UPDATE " . $this->backtick($table) . " SET ";
+    	$first = true;
+    	foreach ($keyvalpairs as $key => $value) {
+    		$this->initialpart .= ($first == false) ? ", " : "";
+    		$this->initialpart .= $this->backtick($key) . " = ";
+    		$this->initialpart .= ($quoteval == true) ? $this->quote($value) : $value;
+    		$first = false;
+    	}
+    	$this->initialpart .= " ";
+    	return $this;
+    }
+    
 	public function insert() {}
 	public function delete() {}
-	
-	
-	
 	
 	/**
 	 * Checks if a given array is multidimensional

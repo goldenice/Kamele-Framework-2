@@ -79,4 +79,33 @@ class QueryBuilderTest extends PHPUnit_Framework_Testcase {
         $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test double LIMIT");
     }
     
+    public function testWhere() {
+        // At this point, the query is: SELECT * FROM `table`
+        $this->qb1->select('*')->from('table')->where("`x`='y'");
+        $this->qb2->select('*')->from('table')->where(array('x', 'y'));
+        $this->qb3->select('*')->from('table')->where(array(array('a', 'x'), array('b', 'y')));
+        
+        $qb1 = "SELECT * FROM `table` WHERE `x`='y'";
+        $qb2 = "SELECT * FROM `table` WHERE `x` = 'y'";
+        $qb3 = "SELECT * FROM `table` WHERE `a` = 'x' AND `b` = 'y'";
+        
+        $this->assertEquals($qb1, trim($this->qb1->getQuery()), "Test string WHERE");
+        $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test array WHERE");
+        $this->assertEquals($qb3, trim($this->qb3->getQuery()), "Test multi dimensional array WHERE");
+    }
+    
+    public function testUpdate() {
+        $this->qb1->update('table', array('a'=>'x', 'b'=>'y', 'c'=>'z'));
+        $this->qb2->update('table', array('a'=>'x', 'b'=>'y', 'c'=>'z'), false);
+        $this->qb3->update('table', array('a'=>'x', 'b'=>'y', 'c'=>'z'))->where(array('x', 'y'));
+        
+        $qb1 = "UPDATE `table` SET `a` = 'x', `b` = 'y', `c` = 'z'";
+        $qb2 = "UPDATE `table` SET `a` = x, `b` = y, `c` = z";
+        $qb3 = "UPDATE `table` SET `a` = 'x', `b` = 'y', `c` = 'z' WHERE `x` = 'y'";
+        
+        $this->assertEquals($qb1, trim($this->qb1->getQuery()), "Test UPDATE with quotes");
+        $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test UPDATE without quotes");
+        $this->assertEquals($qb3, trim($this->qb3->getQuery()), "Test UPDATE with WHERE clause");
+    }
+    
 }
