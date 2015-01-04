@@ -14,9 +14,14 @@ if (!defined('SYSTEM')) exit('No direct script access allowed');
 abstract class Model extends Application {
 
     protected $db;
+    protected $qb;
 
     public function __construct() {
-        $this->db = new \System\Database\Wrapper;
+    	$basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
+    	$dbclass = $basepath . 'Driver';
+    	$qbclass = $basepath . 'QueryBuilder';
+        $this->db = new $dbclass;
+        $this->qb = new $qbclass;
     }
 
 }

@@ -3,8 +3,6 @@ namespace System\Database\Drivers\Mysqli;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
-use \System\Database\DatabaseDriver;
-
 /**
  * Querybuilder implementation for MySQL
  * 
