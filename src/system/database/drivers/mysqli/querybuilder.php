@@ -286,7 +286,10 @@ class QueryBuilder implements \System\Database\QueryBuilder {
 		return $output;
 	}
 	
-	public function delete() {}
+	public function delete($table) {
+		$this->initialpart = "DELETE FROM " . $this->backtick($table) . " ";
+		return $this;
+	}
 	
 	/**
 	 * Checks if a given array is multidimensional

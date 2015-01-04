@@ -121,4 +121,14 @@ class QueryBuilderTest extends PHPUnit_Framework_Testcase {
         $this->assertEquals($qb3, trim($this->qb3->getQuery()), "Test INSERT with multi-values and columns");
     }
     
+    public function testDelete() {
+        $this->qb1->delete('table');
+        $qb1 = "DELETE FROM `table`";
+        $this->qb2->delete('table')->where(array('x', 'y'));
+        $qb2 = "DELETE FROM `table` WHERE `x` = 'y'";
+        
+        $this->assertEquals($qb1, trim($this->qb1->getQuery()), "Test DELETE FROM");
+        $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test DELETE FROM with WHERE");
+    }
+    
 }

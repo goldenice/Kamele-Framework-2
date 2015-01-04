@@ -18,7 +18,7 @@ interface QueryBuilder {
 	public function select($columns);
 	public function update($table, array $keyvalpairs, $quoteval);
 	public function insert($table, $values, $columns);
-	public function delete();
+	public function delete($table);
 	
 	public function from($input);
 	public function where($input);
