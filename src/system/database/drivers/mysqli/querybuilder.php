@@ -231,7 +231,61 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     	return $this;
     }
     
-	public function insert() {}
+    /**
+     * Generates an INSERT INTO statement
+     * @param	string			$table
+     * @param	array|string	$values
+     * @param	array|string	$columns
+     * @return	QueryBuilder
+     */
+	public function insert($table, $values, $columns = null) {
+		$this->initialpart = "INSERT INTO " . $this->backtick($table) . " ";
+		if (is_array($columns)) {
+			$first = true;
+			$this->initialpart .= "(";
+			foreach ($columns as $val) {
+				$this->initialpart .= ($first == false) ? ", " : "";
+				$this->initialpart .= $this->backtick($val);
+				$first = false;
+			}
+			$this->initialpart .= ") ";
+		} else if ($columns != null) {
+			$this->initialpart .= $columns . " ";
+		}
+		$this->initialpart .= "VALUES ";
+		if (is_array($values) && $this->isMultiArray($values)) {
+			$first = true;
+			foreach ($values as $row) {
+				$this->initialpart .= ($first == false) ? ", (" : "(";
+				$this->initialpart .= $this->generateSet($row);
+				$this->initialpart .= ")";
+				$first = false;
+			}
+		} else if (is_array($values)) {
+			$this->initialpart .= "(" . $this->generateSet($values) . ")";
+		} else {
+			$this->initialpart .= $values;
+		}
+		$this->initialpart .= " ";
+		return $this;
+	}
+	
+	/**
+	 * Renders a set of values from an array separated by comma's
+	 * @param		array	$input
+	 * @return		string
+	 */
+	protected function generateSet($input) {
+		$output = "";
+		$first = true;
+		foreach ($input as $val) {
+			$output .= ($first == false) ? ", " : "";
+			$output .= (is_numeric($val)) ? $val : $this->quote($val);
+			$first = false;
+		}
+		return $output;
+	}
+	
 	public function delete() {}
 	
 	/**

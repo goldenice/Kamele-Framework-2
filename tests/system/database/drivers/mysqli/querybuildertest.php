@@ -108,4 +108,17 @@ class QueryBuilderTest extends PHPUnit_Framework_Testcase {
         $this->assertEquals($qb3, trim($this->qb3->getQuery()), "Test UPDATE with WHERE clause");
     }
     
+    public function testInsert() {
+        $this->qb1->insert('table', array('x', 'y'));
+        $qb1 = "INSERT INTO `table` VALUES ('x', 'y')";
+        $this->qb2->insert('table', array('x', 'y'), array('a', 'b'));
+        $qb2 = "INSERT INTO `table` (`a`, `b`) VALUES ('x', 'y')";
+        $this->qb3->insert('table', array(array('x1', 'y1'), array('x2', 'y2')), array('a', 'b'));
+        $qb3 = "INSERT INTO `table` (`a`, `b`) VALUES ('x1', 'y1'), ('x2', 'y2')";
+        
+        $this->assertEquals($qb1, trim($this->qb1->getQuery()), "Test INSERT without columns");
+        $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test INSERT with columns");
+        $this->assertEquals($qb3, trim($this->qb3->getQuery()), "Test INSERT with multi-values and columns");
+    }
+    
 }
