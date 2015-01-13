@@ -21,7 +21,7 @@ abstract class Model extends Application {
     	$dbclass = $basepath . 'Driver';
     	$qbclass = $basepath . 'QueryBuilder';
         $this->db = new $dbclass;
-        $this->qb = new $qbclass;
+        $this->qb = new $qbclass($this->db);
     }
 
 }
