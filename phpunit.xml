@@ -6,7 +6,8 @@
             <file>tests/system/core/routertest.php</file>
         </testsuite>
         <testsuite name="database">
-            <file>tests/system/database/drivers/mysqli/querybuildertest.php</file>
+            <file>tests/system/database/drivers/mysqli/querybuildermysqlitest.php</file>
+            <file>tests/system/database/drivers/postgresql/querybuilderpostgresqltest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
