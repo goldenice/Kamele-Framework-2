@@ -30,7 +30,7 @@ class Driver implements DatabaseDriver {
 	}
 	
 	public function selectDb($dbname) {
-		return (($this->handler = pg_connect("host=".$host." user=".$user." pass=".$pass." dbname=".$name)) != null);
+		return (($this->handler = pg_connect("host=".$host." user=".$user." pass=".$pass." dbname=".$dbname)) != null);
 	}
 	
 	public function query($query) {
