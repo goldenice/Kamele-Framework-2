@@ -10,8 +10,13 @@
 // Intializing basic stuff
 define("KAMELE_VERSION", '2.0');
 define("SYSTEM", KAMELE_VERSION);       // For compatibility with Kamele 1.x libraries
-define("MODE", "development");
 define("DIR_SEPARATOR", "/");
+
+// Load all configuration files
+$c_dir = opendir('config');
+while ($c_item = readdir($c_dir)) {
+    if ($c_item != '.' && $c_item != '..' && !is_dir($c_item)) require_once 'config'.DIR_SEPARATOR.$c_item;
+}
 
 // Evaluate environment
 if (MODE == "production" || MODE == "testing") {
@@ -23,12 +28,6 @@ else if (MODE == "development") {
 } 
 else {
     exit("Application environment not set correctly");
-}
-
-// Load all configuration files
-$c_dir = opendir('config');
-while ($c_item = readdir($c_dir)) {
-    if ($c_item != '.' && $c_item != '..' && !is_dir($c_item)) require_once 'config'.DIR_SEPARATOR.$c_item;
 }
 
 // Initiate the core
