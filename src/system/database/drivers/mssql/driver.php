@@ -1,12 +1,12 @@
 <?php
-namespace System\Database\Drivers\Postgresql;
+namespace System\Database\Drivers\Mssql;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
 use \System\Database\DatabaseDriver;
 
 /**
- * Driver for postgresql database
+ * Driver for mysqli database
  * 
  * @package		Kamele Framework
  * @subpackage	System
@@ -26,15 +26,16 @@ class Driver implements DatabaseDriver {
 		$this->host = $host;
 		$this->user = $user;
 		$this->pass = $pass;
-		return (!$this->handler->connect_error && $this->selectDb($name));
+		$this->handler = mssql_connect($host, $user, $pass, true);
+		return ($this->handler != false && $this->handler != null);
 	}
 	
 	public function selectDb($dbname) {
-		return (($this->handler = pg_connect("host=".$host." user=".$user." pass=".$pass." dbname=".$dbname)) != null);
+		return mssql_select_db($dbname);
 	}
 	
 	public function query($query) {
-		return $last_query_result = new Result(pg_query($this->handler, $query));
+		return $last_query_result = new Result(mssql_query($query, $this->handler));
 	}
 	
 	public function lastResult() {

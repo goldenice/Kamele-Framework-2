@@ -1,12 +1,12 @@
 <?php
-namespace System\Database\Drivers\Postgresql;
+namespace System\Database\Drivers\Mssql;
 
 use \System\Database\DatabaseResult;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
 /**
- * Fetches result of a postgresql result object
+ * Fetches result of a mssql result object
  * 
  * @package		Kamele Framework
  * @subpackage	System
@@ -22,15 +22,19 @@ class Result implements DatabaseResult {
 	}
 	
 	public function fetchArray() {
-		return pg_fetch_assoc($this->result);
+		return mssql_fetch_assoc($this->result);
 	}
 	
 	public function fetchObject() {
-		return pg_fetch_object($this->result);
+		return mssql_fetch_object($this->result);
 	}
 	
 	public function fetchMultiArray() {
-		return pg_fetch_all($this->result);
+	    $output = array();
+	    while (($cur = $this->fetchArray()) != null) {
+	        $output[] = $cur;
+	    }
+		return $output;
 	}
 	
 	public function fetchMultiObject() {
