@@ -42,9 +42,9 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     public function getQuery() {
         if ($this->initialpart == "") return "";
         $query = $this->initialpart;
-        if ($query == "SELECT ") {
-        	$this->initialpart .= $this->limit;
-        	$this->initialpart .= $this->select;
+        if (trim($this->initialpart) == "SELECT") {
+        	$query .= $this->limit;
+        	$query .= $this->select;
         }
         $query .= $this->renderFrom();
         $query .= $this->renderOrderBy();
@@ -198,7 +198,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
 	 * @return	QueryBuilder
 	 */
 	public function limit($input) {
-		$this->limit = "TOP (" . $input . ")";
+		$this->limit = "TOP " . $input . " ";
 		return $this;
 	}
     

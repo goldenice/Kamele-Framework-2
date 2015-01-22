@@ -8,6 +8,7 @@
         <testsuite name="database">
             <file>tests/system/database/drivers/mysqli/querybuildermysqlitest.php</file>
             <file>tests/system/database/drivers/postgresql/querybuilderpostgresqltest.php</file>
+            <file>tests/system/database/drivers/mssql/querybuildermssqltest.php</file>
         </testsuite>
     </testsuites>
 </phpunit>
