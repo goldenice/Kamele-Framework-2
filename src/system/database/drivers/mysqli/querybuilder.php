@@ -42,9 +42,9 @@ class QueryBuilder implements \System\Database\QueryBuilder {
         if ($this->initialpart == "") return "";
         $query = $this->initialpart;
         $query .= $this->renderFrom();
+        $query .= $this->where;
         $query .= $this->renderOrderBy();
         $query .= $this->limit;
-        $query .= $this->where;
         return $query;
     }
     

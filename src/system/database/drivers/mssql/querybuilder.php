@@ -1,5 +1,5 @@
 <?php
-namespace System\Database\Drivers\Postgresql;
+namespace System\Database\Drivers\Mssql;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
@@ -15,6 +15,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     
     private $initialpart = "";
     
+    private $select = '';
     private $from = array();
     private $orderby = array();
     private $limit = '';
@@ -41,10 +42,13 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     public function getQuery() {
         if ($this->initialpart == "") return "";
         $query = $this->initialpart;
+        if ($query == "SELECT ") {
+        	$this->initialpart .= $this->limit;
+        	$this->initialpart .= $this->select;
+        }
         $query .= $this->renderFrom();
-        $query .= $this->where;
         $query .= $this->renderOrderBy();
-        $query .= $this->limit;
+        $query .= $this->where;
         return $query;
     }
     
@@ -59,9 +63,9 @@ class QueryBuilder implements \System\Database\QueryBuilder {
             foreach ($this->from as $key => $value) {
                 $output .= ($first == false) ? ", " : "";
                 if (!is_numeric($key)) {
-                    $output .= $this->doubleQuote($key) . " AS " . $this->doubleQuote($value);
+                    $output .= $this->backtick($key) . " AS " . $this->backtick($value);
                 } else {
-                    $output .= $this->doubleQuote($value);
+                    $output .= $this->backtick($value);
                 }
                 $first = false;
             }
@@ -80,7 +84,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
         if (count($this->orderby) > 0) {
             foreach ($this->orderby as $key => $value) {
                 $output .= ($first == false) ? ", " : "";
-                $output .= $this->doubleQuote($value[0]) . " " . $this->ascOrDesc($value[1]);
+                $output .= $this->backtick($value[0]) . " " . $this->ascOrDesc($value[1]);
                 $first = false;
             }
             return $output . " ";
@@ -94,29 +98,30 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @return  QueryBuilder
      */
     public function select($parts) {
-        $output = "SELECT ";
+        $this->initialpart = "SELECT ";
+        $output = "";
         if (is_array($parts)) {
             $first = true;
             foreach ($parts as $key => $value) {
                 $output .= ($first == false) ? ", " : "";
                 // TODO: fix that ugly zero check in this if
                 if (($key == 'MAX' || $key == 'COUNT' || $key == 'AVG' || $key == 'MIN') && $key != 0) {        // Why the fuck is that zero screwing things up?!
-                    $output .= $key . "(" . $this->doubleQuote($value) . ")";
+                    $output .= $key . "(" . $this->backtick($value) . ")";
                 } else if (!is_numeric($key)) {
-                    $output .= $this->doubleQuote($key) . " AS " . $this->doubleQuote($value);
+                    $output .= $this->backtick($key) . " AS " . $this->backtick($value);
                 } else {
-                    $output .= $this->doubleQuote($value);
+                    $output .= $this->backtick($value);
                 }
                 $first = false;
             }
         } else {
             if ($parts != '*') {
-                $output .= $this->doubleQuote($parts);
+                $output .= $this->backtick($parts);
             } else {
                 $output .= '*';
             }
         }
-        $this->initialpart = $output . " ";
+        $this->select = $output . " ";
         return $this;
     }
     
@@ -163,12 +168,12 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     	if (is_array($input) && $this->isMultiArray($input)) {
     		foreach ($input as $value) {
     			if (!is_numeric($value[1])) $value[1] = $this->quote($value[1]);
-    			$this->appendWhere($this->doubleQuote($value[0]) . " = " . $value[1]);
+    			$this->appendWhere($this->backtick($value[0]) . " = " . $value[1]);
     		}
     	}
     	else if (is_array($input) && sizeof($input) == 2) {
     		if (!is_numeric($input[1])) $input[1] = $this->quote($input[1]);
-    		$this->appendWhere($this->doubleQuote($input[0]) . " = " . $input[1]);
+    		$this->appendWhere($this->backtick($input[0]) . " = " . $input[1]);
     	} else {
     		$this->appendWhere($input);
     	}
@@ -193,19 +198,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
 	 * @return	QueryBuilder
 	 */
 	public function limit($input) {
-		if (is_array($input)) {
-			if (sizeof($input) == 2) {
-				$this->limit = "LIMIT ".$input[0].",".$input[1]." ";
-			} else {
-				// TODO: throw some kind of exception
-			}
-		} else {
-			if (is_numeric($input)) {
-				$this->limit = "LIMIT ".$input." ";
-			} else {
-				// TODO: throw some kind of exception
-			}
-		}
+		$this->limit = "TOP (" . $input . ")";
 		return $this;
 	}
     
@@ -217,11 +210,11 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @return	QueryBuilder
      */
     public function update($table, array $keyvalpairs, $quoteval = true) {
-    	$this->initialpart = "UPDATE " . $this->doubleQuote($table) . " SET ";
+    	$this->initialpart = "UPDATE " . $this->backtick($table) . " SET ";
     	$first = true;
     	foreach ($keyvalpairs as $key => $value) {
     		$this->initialpart .= ($first == false) ? ", " : "";
-    		$this->initialpart .= $this->doubleQuote($key) . " = ";
+    		$this->initialpart .= $this->backtick($key) . " = ";
     		$this->initialpart .= ($quoteval == true) ? $this->quote($value) : $value;
     		$first = false;
     	}
@@ -237,13 +230,13 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @return	QueryBuilder
      */
 	public function insert($table, $values, $columns = null) {
-		$this->initialpart = "INSERT INTO " . $this->doubleQuote($table) . " ";
+		$this->initialpart = "INSERT INTO " . $this->backtick($table) . " ";
 		if (is_array($columns)) {
 			$first = true;
 			$this->initialpart .= "(";
 			foreach ($columns as $val) {
 				$this->initialpart .= ($first == false) ? ", " : "";
-				$this->initialpart .= $this->doubleQuote($val);
+				$this->initialpart .= $this->backtick($val);
 				$first = false;
 			}
 			$this->initialpart .= ") ";
@@ -285,7 +278,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
 	}
 	
 	public function delete($table) {
-		$this->initialpart = "DELETE FROM " . $this->doubleQuote($table) . " ";
+		$this->initialpart = "DELETE FROM " . $this->backtick($table) . " ";
 		return $this;
 	}
 	
@@ -314,8 +307,8 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @param	string	$input
      * @return	string
      */
-    protected function doubleQuote($input) {
-    	return '"'.$input.'"';
+    protected function backtick($input) {
+    	return '`'.$input.'`';
     }
     
     /**
