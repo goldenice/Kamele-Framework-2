@@ -17,11 +17,22 @@ abstract class Model extends Application {
     protected $qb;
 
     public function __construct() {
-    	$basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
+        $this->db = self::_getDatabaseDriver();
+        $this->qb = self::_getDatabaseQueryBuilder($this->db);
+    }
+    
+    public static function _getDatabaseDriver() {
+        $basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
     	$dbclass = $basepath . 'Driver';
+    	$db = new $dbclass;
+    	$db->connect();
+    	return $db;
+    }
+    
+    public static function _getDatabaseQueryBuilder($dbdriver) {
+        $basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
     	$qbclass = $basepath . 'QueryBuilder';
-        $this->db = new $dbclass;
-        $this->qb = new $qbclass($this->db);
+        return new $qbclass($dbdriver);
     }
 
 }

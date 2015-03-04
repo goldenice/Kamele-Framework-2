@@ -31,7 +31,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
      * @return  Result
      */
     public function execute() {
-        $this->driver->query($this->getQuery());
+        return $this->driver->query($this->getQuery());
     }
     
     /**

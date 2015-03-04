@@ -4,6 +4,7 @@ namespace System\Database\Drivers\Mysqli;
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
 use \System\Database\DatabaseDriver;
+use \Mysqli;
 
 /**
  * Driver for mysqli database
