@@ -1,2 +1,2 @@
 #!/bin/bash
-zip -r release.zip src/
+cd src && zip -r ../release.zip * ../LICENSE.txt
