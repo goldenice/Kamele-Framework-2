@@ -23,7 +23,7 @@ class Core extends Singleton {
     	
     	// Use default autoloading implementation
     	spl_autoload_extensions('.php');
-    	spl_autoload_register();
+    	spl_autoload_register('spl_autoload');
     	
     	// Set an exception handler
     	set_exception_handler('\System\Core\Exceptions::handle');
