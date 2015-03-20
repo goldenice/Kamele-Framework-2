@@ -47,8 +47,8 @@ class QueryBuilder implements \System\Database\QueryBuilder {
         	$query .= $this->select;
         }
         $query .= $this->renderFrom();
-        $query .= $this->renderOrderBy();
         $query .= $this->where;
+        $query .= $this->renderOrderBy();
         return $query;
     }
     
