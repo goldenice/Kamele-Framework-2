@@ -122,4 +122,11 @@ class QueryBuilderMssqlTest extends PHPUnit_Framework_Testcase {
         $this->assertEquals($qb2, trim($this->qb2->getQuery()), "Test DELETE FROM with WHERE");
     }
     
+    public function testComplex() {
+    	$this->qb1->select('*')->from('y')->where(array('a', 'b'))->order(array('c'))->limit(3);
+    	$qb1 = "SELECT TOP 3 FROM `y` WHERE `a`='b' ORDER BY `c` ASC";
+    	
+    	$this->assertEquals($qb1, trim($this->qb1->getQuery()), "Testing complex query");
+    }
+    
 }
