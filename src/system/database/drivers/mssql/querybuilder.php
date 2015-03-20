@@ -177,6 +177,7 @@ class QueryBuilder implements \System\Database\QueryBuilder {
     	} else {
     		$this->appendWhere($input);
     	}
+    	return $this;
     }
     
     /**
