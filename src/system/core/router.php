@@ -3,6 +3,7 @@ namespace System\Core;
 
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
+use \System\Cli\Console;
 use \System\Exceptions\RouterException;
 
 /**
@@ -32,7 +33,11 @@ class Router {
 		
 		if ($this->mode == self::MODE_CLI) {
             if (isset($_SERVER['argv'][1])) {
-    	        $this->route($_SERVER['argv'][0].'/'.$_SERVER['argv'][1]);    
+                if ($_SERVER['argv'][1] == '-i' || $_SERVER['argv'][1] == '--interactive') {
+                    Console::getInstance()->main();
+                } else {
+    	            $this->route($_SERVER['argv'][0].'/'.$_SERVER['argv'][1]);
+                }
             }
             else {
                 $this->route($_SERVER['argv'][0]);
