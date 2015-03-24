@@ -13,26 +13,41 @@ if (!defined('SYSTEM')) exit('No direct script access allowed');
  */
 abstract class Model extends Application {
 
-    protected $db;
-    protected $qb;
+    protected static $db;
+    protected static $qb;
 
     public function __construct() {
         $this->db = self::_getDatabaseDriver();
         $this->qb = self::_getDatabaseQueryBuilder($this->db);
     }
     
+    public function __get($name) {
+    	if (isset($this->$name)) {
+    		return $this->$name;
+    	} else if ($name == "db") {
+    		return _getDatabaseDriver();
+    	} else if ($name == "qb") {
+    		return _getDatabaseQueryBuilder($this->db);
+    	} else {
+    		return null;
+    	}
+    }
+    
     public static function _getDatabaseDriver() {
-        $basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
-    	$dbclass = $basepath . 'Driver';
-    	$db = new $dbclass;
-    	$db->connect();
-    	return $db;
+    	if (!isset(self::$db)) {
+        	$dbclass = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\Driver';
+    		self::$db = new $dbclass;
+    		self::$db->connect();
+    	}
+    	return self::$db;
     }
     
     public static function _getDatabaseQueryBuilder($dbdriver) {
-        $basepath = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\\';
-    	$qbclass = $basepath . 'QueryBuilder';
-        return new $qbclass($dbdriver);
+    	if (!isset(self::$qb)) {
+        	$qbclass = '\System\Database\Drivers\\' . ucfirst(DB_DRIVER) . '\QueryBuilder';
+    		self::$qb = new $qbclass(self::_getDatabaseDriver());
+    	}
+        return self::$qb;
     }
 
 }
