@@ -35,6 +35,7 @@ class Console extends Singleton {
 			if ($input != false) {
 				$parts = $this->parse($input);
 				if (isset($this->cmds[$parts[0]])) {
+					$this->addToHistory($input);
 					$this->output(call_user_func(array($this->cmds[$parts[0]]['class'], $this->cmds[$parts[0]]['method']), array_shift($parts)));
 				} else {
 					$this->output('Command not recognized');
@@ -42,6 +43,16 @@ class Console extends Singleton {
 			} else {
 				$this->running = false;
 			}
+		}
+	}
+	
+	/**
+	 * Adds a line to the history when readline is being used
+	 * @param	string		$command		Command to add to history
+	 */
+	private function addToHistory($command) {
+		if (function_exists("readline_add_history")) {
+			\readline_add_history($command);
 		}
 	}
 	
@@ -61,12 +72,16 @@ class Console extends Singleton {
 	 */
 	private function readline() {
 		$prompt = "Kamele " . KAMELE_VERSION . " $ ";
-		if($prompt){
-			fputs(STDOUT, $prompt);
+		if (function_exists("readline")) {
+			return \readline($prompt);
+		} else {
+			if($prompt){
+				fputs(STDOUT, $prompt);
+			}
+			flush();
+			$line = rtrim(fgets(STDIN, 1024));
+			return $line;
 		}
-		flush();
-		$line = rtrim(fgets(STDIN, 1024));
-		return $line;
 	}
 	
 	/**
