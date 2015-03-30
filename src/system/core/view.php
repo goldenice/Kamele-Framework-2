@@ -1,6 +1,8 @@
 <?php
 namespace System\Core;
 
+use \System\Exceptions\Ktl\SyntaxException;
+
 if (!defined('SYSTEM')) exit('No direct script access allowed');
 
 /**
@@ -77,6 +79,7 @@ class View {
 					}
 					break;
 				case 'else':
+					if (!isset($keepif[$layer])) throw new SyntaxException("Unexpected else statement!");
 					if (!$keepif[$layer]) {
 						$deleteparts[] = array($from[$layer], $tag[1] + strlen($tag[0]));
 					} else {
@@ -84,6 +87,7 @@ class View {
 					}
 					break;
 				case 'endif':
+					if (!isset($keepif[$layer])) throw new SyntaxException("Unexpected endif statement!");
 					if ($keepif[$layer]) {
 						if ($from[$layer] == -1) $from[$layer] = $tag[1];
 						$deleteparts[] = array($from[$layer], $tag[1] + strlen($tag[0]));
