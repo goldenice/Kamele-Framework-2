@@ -166,11 +166,11 @@ class View {
 	/**
 	 * Foreach
 	 * 
-	 * @param	string		$viewpath
 	 * @param	string[]	$data
+	 * @param	string		$viewpath
 	 * @return	string
 	 */
-	private function foreachView($viewpath, $data) {
+	private function foreachView($data, $viewpath) {
 		$output = '';
 		foreach ($data as $value) {
 			if (!is_array($value)) $value = array('value'=>$value);
