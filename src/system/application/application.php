@@ -15,10 +15,6 @@ if (!defined('SYSTEM')) exit('No direct script access allowed');
 abstract class Application {
 
 	protected $instances = array();
-
-	public function __construct() {
-		parent::__construct();
-	}
 	
 	public final function get($class, $args = array()) {
 		if (isset($instances[$class])) {

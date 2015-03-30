@@ -15,11 +15,6 @@ abstract class Model extends Application {
 
     protected static $db;
     protected static $qb;
-
-    public function __construct() {
-        $this->db = self::_getDatabaseDriver();
-        $this->qb = self::_getDatabaseQueryBuilder($this->db);
-    }
     
     public function __get($name) {
     	if (isset($this->$name)) {
