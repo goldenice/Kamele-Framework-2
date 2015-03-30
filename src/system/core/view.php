@@ -39,8 +39,82 @@ class View {
 	 * @return	string
 	 */
 	public function render($data) {
-		$view = $this->fillInViews(file_get_contents($this->path));
-		return $this->fillInOutputs($data, $view);
+		return 	$this->ifelse(
+					$this->fillInOutputs(
+						$this->fillInViews(
+							file_get_contents($this->path)
+						), $data
+					), $data
+				);
+		
+	}
+	
+	/**
+	 * Removes parts of the view that won't be needed (like false if statements)
+	 * 
+	 * @param 	string		$raw		The raw view to process
+	 * @param	string[]	$data		The data to use while checking
+	 * @return	string
+	 */
+	private function ifelse($raw, $data) {
+		$layer = 0;
+		$keepif = array();
+		$from = array();
+		$deleteparts = array();												// Formatted [ [from, to], [from, to] ]
+		
+		preg_match_all('/{{.*}}/', $raw, $matches, PREG_OFFSET_CAPTURE);		// Matches every {{something}} formatted tag
+		//var_dump(json_encode($matches));
+		//return $raw;
+		foreach ($matches[0] as $tag) {
+			$tagparts = explode(':', trim($tag[0], '{}'));								// Split the parts separated by a :
+			switch ($tagparts[0]) {
+				case 'if':
+					$layer++;
+					$keepif[$layer] = ($data[$tagparts[1]] == true);
+					if (!$keepif[$layer]) {
+						$from[$layer] = $tag[1];
+					} else {
+						$deleteparts[] = array($tag[1], $tag[1] + strlen($tag[0]));
+						$from[$layer] = -1;
+					}
+					break;
+				case 'else':
+					if (!$keepif[$layer]) {
+						$deleteparts[] = array($from[$layer], $tag[1] + strlen($tag[0]));
+					} else {
+						$from[$layer] = $tag[1];
+					}
+					break;
+				case 'endif':
+					if ($keepif[$layer]) {
+						if ($from[$layer] == -1) $from[$layer] = $tag[1];
+						$deleteparts[] = array($from[$layer], $tag[1] + strlen($tag[0]));
+					} else {
+						$deleteparts[] = array($tag[1], $tag[1] + strlen($tag[0]));
+					}
+					unset($keepif[$layer]);
+					unset($from[$layer]);
+					$layer--;
+					break;
+				default:
+					break;
+			}
+		}
+
+		while (($deleteparts != null) && ($elem = array_pop($deleteparts)) != null) {
+			$raw = substr($raw, 0, $elem[0]) . substr($raw, $elem[1]);
+			foreach ($deleteparts as $key=>$val) {
+				$val[0] = min($val[0], $elem[0]);
+				$val[1] = min($val[1], $elem[0]);
+				if ($val[0] != $val[1]) {
+					$deleteparts[$key] = $val;
+				} else {
+					unset($deleteparts[$key]);
+				}
+			}
+		}
+		
+		return $raw;
 	}
 	
 	/**
@@ -56,11 +130,11 @@ class View {
 	/**
 	 * Fills in data
 	 * 
-	 * @param	string[]	$data
 	 * @param	string		$view
+	 * @param	string[]	$data
 	 * @return	string
 	 */
-	private function fillInOutputs($data, $view) {
+	private function fillInOutputs($view, $data) {
 		$output = '';
 		$data['baseurl'] = BASEURL;
 		$parts = explode('{{output:', $view);
@@ -92,10 +166,11 @@ class View {
 	/**
 	 * Foreach
 	 * 
+	 * @param	string		$viewpath
 	 * @param	string[]	$data
 	 * @return	string
 	 */
-	private function foreachView($data, $viewpath) {
+	private function foreachView($viewpath, $data) {
 		$output = '';
 		foreach ($data as $value) {
 			if (!is_array($value)) $value = array('value'=>$value);

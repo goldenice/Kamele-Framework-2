@@ -23,5 +23,6 @@ class Home extends Controller {
         
     	$this->view_data['title'] = $model->getTitle();
     	$this->view_data['text'] = $model->getHelloWorld();
+    	$this->view_data['important'] = true;
     }
 }
