@@ -63,8 +63,6 @@ class View {
 		$deleteparts = array();												// Formatted [ [from, to], [from, to] ]
 		
 		preg_match_all('/{{.*}}/', $raw, $matches, PREG_OFFSET_CAPTURE);		// Matches every {{something}} formatted tag
-		//var_dump(json_encode($matches));
-		//return $raw;
 		foreach ($matches[0] as $tag) {
 			$tagparts = explode(':', trim($tag[0], '{}'));								// Split the parts separated by a :
 			switch ($tagparts[0]) {
